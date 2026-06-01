@@ -443,6 +443,364 @@ footer{background:var(--blue-dark);padding:64px 5% 36px}
   </div>
 </section>
 
+<!--
+  ═══════════════════════════════════════════════════════════════
+  SECTION: Expert-Led Stock Investment Learning Cohorts
+  Untuk: mulaiinvest.id (landing page)
+
+  CARA PASANG:
+  1. Copy seluruh kode di bawah
+  2. Paste ke file landing page kamu (ganti section cohort yang lama)
+  3. Ubah COHORT_API_URL jika domain berbeda
+
+  CARA ADMIN UPDATE JADWAL:
+  → Masuk ke app.mulaiinvest.id/admin/cohort
+  → Tambah/edit/hapus sesi
+  → Halaman ini otomatis update (fetch dari API)
+  ═══════════════════════════════════════════════════════════════
+-->
+
+<!-- ── FONTS (skip jika sudah ada di halaman) ── -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ── COHORT SECTION ── -->
+<section id="cohort" style="
+  background: #0F4C5C;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+">
+  <!-- Background texture -->
+  <div style="
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(232,155,60,0.08) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(212,233,237,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  "></div>
+
+  <div style="max-width: 860px; margin: 0 auto; position: relative; z-index: 1;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 56px;">
+      <span style="
+        display: inline-block;
+        background: rgba(232,155,60,0.15);
+        color: #E89B3C;
+        border: 1px solid rgba(232,155,60,0.35);
+        font-size: 11px; font-weight: 700;
+        letter-spacing: 0.14em; text-transform: uppercase;
+        padding: 6px 18px; border-radius: 20px;
+        margin-bottom: 20px;
+        font-family: 'DM Sans', sans-serif;
+      ">Sesi Eksklusif</span>
+
+      <h2 style="
+        font-family: 'Instrument Serif', serif;
+        font-size: clamp(30px, 5vw, 48px);
+        color: #FDF8F0;
+        line-height: 1.1;
+        margin: 0 0 16px;
+        letter-spacing: -0.02em;
+      ">
+        Expert-Led Stock Investment<br>
+        <em style="color: #E89B3C;">Learning Cohorts</em>
+      </h2>
+
+      <p style="
+        color: rgba(212,233,237,0.75);
+        font-size: 16px; line-height: 1.7;
+        max-width: 52ch; margin: 0 auto;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 300;
+      ">
+        Sesi live bersama investor & analis berpengalaman.
+        Tanya langsung, diskusi nyata, up to 2 jam per sesi.
+      </p>
+    </div>
+
+    <!-- Cohort Cards — diisi otomatis dari API -->
+    <div id="cohort-cards" style="
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    ">
+      <!-- Loading state -->
+      <div id="cohort-loading" style="
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        color: rgba(212,233,237,0.5);
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+      ">
+        Memuat jadwal sesi...
+      </div>
+    </div>
+
+    <!-- Footer info -->
+    <div style="
+      text-align: center;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    ">
+      <p style="
+        color: rgba(212,233,237,0.55);
+        font-size: 13px;
+        font-family: 'DM Sans', sans-serif;
+        margin: 0;
+      ">
+        Setelah pembayaran dikonfirmasi, link sesi akan dikirim otomatis ke email kamu.
+        Ada pertanyaan? <a href="mailto:Admin@mulaiinvest.id" style="color: #E89B3C; text-decoration: none;">Admin@mulaiinvest.id</a>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── TEMPLATE KARTU SESI (clone by JS) ── -->
+<template id="cohort-card-template">
+  <div class="cohort-card" style="
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: default;
+  "
+  onmouseenter="this.style.transform='translateY(-3px)'; this.style.borderColor='rgba(232,155,60,0.4)'"
+  onmouseleave="this.style.transform='translateY(0)'; this.style.borderColor='rgba(255,255,255,0.12)'"
+  >
+    <!-- Badge status -->
+    <div class="card-badge" style="
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px; border-radius: 20px;
+      width: fit-content;
+      font-family: 'DM Sans', sans-serif;
+    "></div>
+
+    <!-- Tanggal & waktu -->
+    <div>
+      <p class="card-tanggal" style="
+        font-family: 'Instrument Serif', serif;
+        font-size: 22px; color: #FDF8F0;
+        margin: 0 0 4px; line-height: 1.2;
+      "></p>
+      <p class="card-waktu" style="
+        font-size: 13px; color: rgba(212,233,237,0.65);
+        margin: 0; font-family: 'DM Sans', sans-serif;
+      "></p>
+    </div>
+
+    <!-- Speaker -->
+    <div style="
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+    ">
+      <div class="card-avatar" style="
+        width: 36px; height: 36px;
+        background: rgba(232,155,60,0.25);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; flex-shrink: 0;
+      "></div>
+      <div>
+        <p class="card-speaker" style="
+          font-size: 14px; font-weight: 600;
+          color: #FDF8F0; margin: 0 0 2px;
+          font-family: 'DM Sans', sans-serif;
+        "></p>
+        <p class="card-speaker-title" style="
+          font-size: 12px; color: rgba(212,233,237,0.55);
+          margin: 0; font-family: 'DM Sans', sans-serif;
+        "></p>
+      </div>
+    </div>
+
+    <!-- Topik -->
+    <p class="card-topik" style="
+      font-size: 14px; color: rgba(212,233,237,0.8);
+      line-height: 1.6; margin: 0;
+      font-family: 'DM Sans', sans-serif;
+    "></p>
+
+    <!-- Harga & slot -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: auto;">
+      <div>
+        <p class="card-harga" style="
+          font-size: 20px; font-weight: 700; color: #E89B3C;
+          margin: 0; font-family: 'DM Sans', sans-serif;
+        "></p>
+        <p class="card-slot" style="
+          font-size: 12px; color: rgba(212,233,237,0.5);
+          margin: 0; font-family: 'DM Sans', sans-serif;
+        "></p>
+      </div>
+    </div>
+
+    <!-- Tombol CTA -->
+    <a class="card-cta" href="#" style="
+      display: block; text-align: center;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700; font-size: 14px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.02em;
+    "
+    onmouseenter="this.style.opacity='0.88'"
+    onmouseleave="this.style.opacity='1'"
+    ></a>
+  </div>
+</template>
+
+<!-- ── JAVASCRIPT: Fetch & Render ── -->
+<script>
+(function() {
+  // ✏️ GANTI ini dengan URL API kamu
+  const COHORT_API_URL = 'https://app.mulaiinvest.id/api/cohorts'
+
+  const container = document.getElementById('cohort-cards')
+  const loading   = document.getElementById('cohort-loading')
+  const template  = document.getElementById('cohort-card-template')
+
+  // Format tanggal ke bahasa Indonesia
+  function formatTanggal(dateStr) {
+    const date = new Date(dateStr)
+    return date.toLocaleDateString('id-ID', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    })
+  }
+
+  function formatHarga(angka) {
+    if (angka === 0) return 'Gratis'
+    return 'Rp ' + angka.toLocaleString('id-ID')
+  }
+
+  function renderCard(sesi) {
+    const clone = template.content.cloneNode(true)
+    const card  = clone.querySelector('.cohort-card')
+
+    const sudahLewat = new Date(sesi.tanggal) < new Date()
+    const penuh      = sesi.slot_tersisa === 0
+
+    // Badge status
+    const badge = clone.querySelector('.card-badge')
+    if (sudahLewat) {
+      badge.textContent = 'Sudah Selesai'
+      badge.style.background = 'rgba(255,255,255,0.08)'
+      badge.style.color = 'rgba(212,233,237,0.45)'
+      card.style.opacity = '0.55'
+    } else if (penuh) {
+      badge.textContent = '🔴 Penuh'
+      badge.style.background = 'rgba(192,57,43,0.15)'
+      badge.style.color = '#E74C3C'
+    } else if (sesi.slot_tersisa <= 5) {
+      badge.textContent = `🔥 Sisa ${sesi.slot_tersisa} slot`
+      badge.style.background = 'rgba(232,155,60,0.15)'
+      badge.style.color = '#E89B3C'
+    } else {
+      badge.textContent = '✅ Tersedia'
+      badge.style.background = 'rgba(46,125,82,0.2)'
+      badge.style.color = '#5DBE87'
+    }
+
+    // Tanggal & waktu
+    clone.querySelector('.card-tanggal').textContent = formatTanggal(sesi.tanggal)
+    clone.querySelector('.card-waktu').textContent   = `${sesi.waktu_mulai} — up to 2 jam sesi`
+
+    // Speaker
+    clone.querySelector('.card-avatar').textContent        = sesi.speaker_nama.charAt(0)
+    clone.querySelector('.card-speaker').textContent       = sesi.speaker_nama
+    clone.querySelector('.card-speaker-title').textContent = sesi.speaker_jabatan
+
+    // Topik
+    clone.querySelector('.card-topik').textContent = sesi.topik
+
+    // Harga & slot
+    clone.querySelector('.card-harga').textContent = formatHarga(sesi.harga)
+    clone.querySelector('.card-slot').textContent  = penuh
+      ? 'Slot habis'
+      : `${sesi.slot_tersisa} dari ${sesi.total_slot} slot tersisa`
+
+    // Tombol CTA
+    const cta = clone.querySelector('.card-cta')
+    if (sudahLewat) {
+      cta.textContent          = 'Sesi Telah Berakhir'
+      cta.style.background     = 'rgba(255,255,255,0.06)'
+      cta.style.color          = 'rgba(212,233,237,0.35)'
+      cta.style.pointerEvents  = 'none'
+      cta.style.cursor         = 'not-allowed'
+    } else if (penuh) {
+      cta.textContent          = 'Slot Penuh'
+      cta.style.background     = 'rgba(255,255,255,0.06)'
+      cta.style.color          = 'rgba(212,233,237,0.35)'
+      cta.style.pointerEvents  = 'none'
+      cta.style.cursor         = 'not-allowed'
+    } else {
+      const tgl = new Date(sesi.tanggal)
+      const tglStr = tgl.toLocaleDateString('id-ID', { day: 'numeric', month: 'long' })
+      cta.textContent      = `Daftar — ${tglStr}`
+      cta.style.background = '#E89B3C'
+      cta.style.color      = '#1A2832'
+      cta.href             = sesi.lynk_url
+      cta.target           = '_blank'
+      cta.rel              = 'noopener noreferrer'
+    }
+
+    return clone
+  }
+
+  // Fetch dari API
+  async function loadCohorts() {
+    try {
+      const res  = await fetch(COHORT_API_URL)
+      const json = await res.json()
+
+      loading.remove()
+
+      if (!json.sessions || json.sessions.length === 0) {
+        container.innerHTML = `
+          <div style="
+            grid-column: 1 / -1; text-align: center; padding: 48px 24px;
+            color: rgba(212,233,237,0.45); font-family: 'DM Sans', sans-serif;
+          ">
+            <p style="font-size: 32px; margin-bottom: 12px;">📅</p>
+            <p style="font-size: 15px; margin: 0;">
+              Jadwal sesi berikutnya sedang dikonfirmasi.<br>
+              Pantau terus atau <a href="mailto:Admin@mulaiinvest.id" style="color: #E89B3C; text-decoration: none;">hubungi kami</a> untuk info terbaru.
+            </p>
+          </div>
+        `
+        return
+      }
+
+      json.sessions.forEach(sesi => {
+        container.appendChild(renderCard(sesi))
+      })
+
+    } catch (err) {
+      loading.innerHTML = `
+        <p style="color: rgba(212,233,237,0.4); font-family: 'DM Sans', sans-serif; font-size: 14px;">
+          Tidak dapat memuat jadwal saat ini. Silakan coba lagi nanti.
+        </p>
+      `
+    }
+  }
+
+  loadCohorts()
+})()
+</script>  
+
 <!-- TRIAL SECTION — Updated: Rp 0 via Lynk.id, no daily email -->
 <section class="trial-section" id="trial">
   <div class="inner">
